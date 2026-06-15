@@ -3,7 +3,7 @@ name: termwiz
 on:
   pull_request:
     branches:
-      - main
+      - workflow_disabled
     paths:
       - "termwiz/**"
       - "bidi/**"
@@ -15,7 +15,7 @@ on:
       - "ci/regen-binary-terminfo.sh"
   push:
     branches:
-      - main
+      - workflow_disabled
     paths:
       - "termwiz/**"
       - "bidi/**"
