@@ -2,9 +2,9 @@ name: Update cargo dependencies with cooldown
 
 on:
   workflow_dispatch:
-  schedule:
+  #schedule:
     # Weekly, early Monday
-    - cron: "0 5 * * 1"
+    #- cron: "0 5 * * 1"
 
 env:
   CARGO_TERM_COLOR: always
