@@ -672,17 +672,23 @@ impl Line {
         let mut lower = click_col;
         let mut upper = click_col;
 
-        // TODO: look back and look ahead for cells that are hidden by
-        // a preceding multi-wide cell
         let cells = self.visible_cells().collect::<Vec<_>>();
         for cell in &cells {
-            if cell.cell_index() < click_col {
+            // Skip cells that end at or before the click. Comparing against the
+            // end of the cell (rather than its start) means that clicking on the
+            // hidden second column of a wide character still starts the scan at
+            // the wide character that covers the click.
+            if cell.cell_index() + cell.width().max(1) <= click_col {
                 continue;
             }
             if !is_word(cell.str()) {
                 break;
             }
-            upper = cell.cell_index() + 1;
+            // Advance past the full width of the cell so that the second
+            // (and subsequent) columns occupied by a wide character are
+            // included in the range; otherwise a trailing wide character
+            // would be left half-selected.
+            upper = cell.cell_index() + cell.width().max(1);
         }
         for cell in cells.iter().rev() {
             if cell.cell_index() > click_col {

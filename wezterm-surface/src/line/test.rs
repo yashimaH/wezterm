@@ -106,6 +106,22 @@ fn double_click_range_bounds() {
     assert_eq!(r, DoubleClickRange::Range(200..200));
 }
 
+/// Double-clicking a run of wide (2-cell) characters must include the full
+/// width of the trailing character, otherwise the last glyph is left
+/// half-selected. <https://github.com/wezterm/wezterm/issues/6733>
+#[test]
+fn double_click_range_wide() {
+    // "日本語" occupies 6 columns (each character is 2 cells wide).
+    let line: Line = "日本語".into();
+    assert_eq!(line.len(), 6);
+    // Clicking on any of its columns should select all 6 columns, so that the
+    // final wide character's second column (index 5) is included.
+    for click_col in 0..6 {
+        let r = line.compute_double_click_range(click_col, |_| true);
+        assert_eq!(r, DoubleClickRange::Range(0..6));
+    }
+}
+
 #[test]
 fn cluster_representation_basic() {
     let line: Line = "hello".into();
